@@ -1,0 +1,3 @@
+/Users/zaidsaheb/CLionProjects/ec-lang/cmake-build-debug/CMakeFiles/ec_lang.dir
+/Users/zaidsaheb/CLionProjects/ec-lang/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/zaidsaheb/CLionProjects/ec-lang/cmake-build-debug/CMakeFiles/rebuild_cache.dir
