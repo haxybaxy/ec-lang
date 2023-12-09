@@ -12,7 +12,7 @@ typedef enum {
 } OpCode;
 
 typedef struct {
-    int count;
+    int count; //Making dynamic array
     int capacity;
     uint8_t* code;
 } Chunk;
