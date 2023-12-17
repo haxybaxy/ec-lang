@@ -4,5 +4,6 @@ store check = a == 20;
 if (check) {
   say "Running true...";
 } else {
-  print "Running false...";
+  say "Running false...";
 }
+
