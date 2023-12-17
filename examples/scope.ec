@@ -1,19 +1,19 @@
-var a = "global a";
-var b = "global b";
-var c = "global c";
+store var1 is "global 1";
+store var2 is "global 2";
+store var3 is "global 3";
 {
-  var a = "outer a";
-  var b = "outer b";
+  store var1 is "outer 1";
+  store var2 is "outer 2";
   {
-    var a = "inner a";
-    print a;
-    print b;
-    print c;
+    store var1 is "inner 1";
+    say var1;
+    say var2;
+    say var3;
   }
-  print a;
-  print b;
-  print c;
+  say var1;
+  say var2;
+  say var3;
 }
-print a;
-print b;
-print c;
+say var1;
+say var2;
+say var3;

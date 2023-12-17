@@ -1,2 +1,2 @@
-var breakfast = "break";
-print "Today's breakfast is " + breakfast + ".";
+store flowers = "roses";
+say "My favorite flowers are " + flowers + ".";

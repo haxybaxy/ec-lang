@@ -47,5 +47,11 @@ void freeVM();
 InterpretResult interpret(const char* source);
 void push(Value value);
 Value pop();
+void resetStack();
+void runtimeError(const char* format, ...);
+void defineNative(const char* name, NativeFn function);
+Value combineNative(int argCount, Value* args);
+Value clockNative(int argCount, Value* args);
+Value concatenateStrings(Value a, Value b);
 
 #endif

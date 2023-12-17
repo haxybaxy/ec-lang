@@ -1,4 +1,5 @@
 print "** Function 1:  sayJoke**";
+
 action sayJoke(joke, punchline) {
   say (joke) + " " + (punchline);
 }
@@ -28,6 +29,7 @@ store counter = keepCount();
 for (store j = 0; j < 10; j = j + 1) {
   counter();
 }
+
 
 say "** Function 4: squaring **";
 action square(x) {

@@ -1,0 +1,3 @@
+C:/Users/sebas/CLionProjects/untitled/ec-lang/cmake-build-debug/CMakeFiles/eclang.dir
+C:/Users/sebas/CLionProjects/untitled/ec-lang/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/sebas/CLionProjects/untitled/ec-lang/cmake-build-debug/CMakeFiles/rebuild_cache.dir
