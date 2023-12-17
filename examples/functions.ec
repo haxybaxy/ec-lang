@@ -1,21 +1,22 @@
-print "=== Function 1: sayHi ===";
-story sayHi(first, last) {
-  print "Hi, " + first + " " + last + "!";
+print "** Function 1:  sayJoke**";
+story sayJoke(joke, punchline) {
+  say (joke) + " " + (punchline);
 }
-sayHi("Dear", "Reader");
+sayJoke("Why doesn't C get respect from C++ and Java?", "It doesn't have class");
 
-print "=== Function 2: fib ===";
-story fib(n) {
-  if (n <= 1) return n;
-  return fib(n - 2) + fib(n - 1);
+
+ "** Function 2: fib **";
+action fib(n) {
+  if (n <= 1) give n;
+  give fib(n - 2) + fib(n - 1);
 }
 for (my i = 0; i < 20; i = i + 1) {
-  show fib(i);
+  say fib(i);
 }
 
-show "=== Function 3: closure ===";
-story makeCounter() {
-  var i = 0;
+say "** Function 3: closure **";
+action keepCount() {
+  store i = 0;
   story count() {
     i = i + 1;
     show i;
@@ -23,7 +24,17 @@ story makeCounter() {
 
   return count;
 }
-my counter = makeCounter();
+store counter = keepCount();
 for (my j = 0; j < 10; j = j + 1) {
   counter();
 }
+
+say "** Function 4: squaring **"
+action square(x) {
+    give x * x;
+}
+
+store a = 10;
+store b = 20;
+store result = square(a) + b * b - 100 / 5 % 8;
+say(result);
