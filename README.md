@@ -8,13 +8,13 @@ First build this project. Here we use CMake:
 ```bash
 $ mkdir build && cd build  # Create a CMake workspace
 $ cmake .. && make
-$ ./kids # Start eclang
+$ ./eclang # Start eclang
 ```
 
 Running Examples
 
 ```
-$ ./kids ../examples/hello-world.kids
+$ ./eclang ../examples/hello-world.kids
 Hello, world!
 ```
 
