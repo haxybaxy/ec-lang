@@ -1,24 +1,22 @@
-# Kids++
+# EC Language
+## Make Programming EC
 
-## Usage
+## Instructions
 
 First build this project. Here we use CMake:
 
 ```bash
 $ mkdir build && cd build  # Create a CMake workspace
 $ cmake .. && make
-$ ./kids # Start kids
+$ ./kids # Start eclang
 ```
 
-Invoking `kids` without parameter starts the REPL. To run kids source files, please specify the file path. Feel free to run examples in the `examples` directory:
+Running Examples
 
 ```
 $ ./kids ../examples/hello-world.kids
 Hello, world!
 ```
-
-## What's Next
-
 
 ## Resources
 
