@@ -1,24 +1,13 @@
 #include "memory.h"
-
 #include <stdlib.h>
-
 #include "compiler.h"
 #include "vm.h"
-
-#ifdef DEBUG_LOG_GC
-#include <stdio.h>
-
-#include "debug.h"
-#endif
 
 #define GC_HEAP_GROW_FACTOR 2
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
     vm.bytesAllocated += newSize - oldSize;
     if (newSize > oldSize) {
-#ifdef DEBUG_STRESS_GC
-        collectGarbage();
-#endif
         if (vm.bytesAllocated > vm.nextGC) {
             collectGarbage();
         }
@@ -46,16 +35,8 @@ void appendToGrayStack(Obj* object) {
 
 void markObject(Obj* object) {
     if (!object || object->isMarked) return;
-
-#ifdef DEBUG_LOG_GC
-    printf("%p mark ", (void*)object);
-    printValue(OBJ_VAL(object));
-    printf("\n");
-#endif
-
     object->isMarked = true;
     appendToGrayStack(object);
-
 }
 
 void markValue(Value value) {
@@ -70,10 +51,6 @@ void markArray(ValueArray* array) {
 
 
 static void freeObject(Obj* object) {
-#ifdef DEBUG_LOG_GC
-  printf("%p free type %d\n", (void*)object, object->type);
-
-#endif
 
   switch (object->type) {
     case OBJ_CLOSURE: {
@@ -104,11 +81,6 @@ static void freeObject(Obj* object) {
 }
 
 static void blackenObject(Obj* object) {
-#ifdef DEBUG_LOG_GC
-  printf("%p blacken ", (void*)object);
-  printValue(OBJ_VAL(object));
-  printf("\n");
-#endif
   switch (object->type) {
     case OBJ_CLOSURE: {
       ObjClosure* closure = (ObjClosure*)object;
@@ -182,10 +154,6 @@ static void sweep() {
 }
 
 void collectGarbage() {
-#ifdef DEBUG_LOG_GC
-    printf("-- gc begin\n");
-    size_t before = vm.bytesAllocated;
-#endif
 
     markRoots();
     traceReferences();
@@ -193,12 +161,6 @@ void collectGarbage() {
     sweep();
 
     vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;
-
-#ifdef DEBUG_LOG_GC
-    printf("-- gc end\n");
-    printf("   collected %zu bytes (from %zu to %zu) next at %zu\n",
-         before - vm.bytesAllocated, before, vm.bytesAllocated, vm.nextGC);
-#endif
 }
 
 void freeObjects() {

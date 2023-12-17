@@ -458,7 +458,6 @@ static void or_(bool canAssign) {
 }
 
 static void string(bool canAssign) {
-  // The "+1" and "-2" parts trim the leading and trailing quotation marks.
   emitConstant(OBJ_VAL(
       copyString(parser.previous.start + 1, parser.previous.length - 2)));
 }
