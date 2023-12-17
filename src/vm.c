@@ -7,17 +7,20 @@
 #include "memory.h"
 VM vm;
 
-static Value clockNative(int argCount, Value* args) {
+void defineNative(const char* name, NativeFn function);
+Value combineNative(int argCount, Value* args);
+
+Value clockNative(int argCount, Value* args) {
   return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
 }
 
-static void resetStack() {
+void resetStack() {
   vm.stackTop = vm.stack;
   vm.frameCount = 0;
   vm.openUpvalues = NULL;
 }
 
-static void runtimeError(const char* format, ...) {
+void runtimeError(const char* format, ...) {
   va_list args;
   va_start(args, format);
   vfprintf(stderr, format, args);
@@ -39,13 +42,49 @@ static void runtimeError(const char* format, ...) {
   resetStack();
 }
 
-static void defineNative(const char* name, NativeFn function) {
+void defineNative(const char* name, NativeFn function) {
   push(OBJ_VAL(copyString(name, (int)strlen(name))));
   push(OBJ_VAL(newNative(function)));
     setInstance(&vm.globals, AS_STRING(vm.stack[0]), vm.stack[1]);
   pop();
   pop();
 }
+
+void defineNativeFunctions() {
+    defineNative("clock", clockNative);
+    defineNative("combine", combineNative);
+    // Add other native functions as needed
+}
+
+Value combineNative(int argCount, Value* args) {
+    if (argCount != 2) {
+        runtimeError("combine() takes exactly 2 arguments.");
+        return NIL_VAL;
+    }
+
+    // Assuming that args[0] and args[1] are strings
+    if (!IS_STRING(args[0]) || !IS_STRING(args[1])) {
+        runtimeError("Arguments to combine() must be strings.");
+        return NIL_VAL;
+    }
+
+    ObjString* a = AS_STRING(args[0]);
+    ObjString* b = AS_STRING(args[1]);
+
+    int length = a->length + b->length;
+    char* chars = ALLOCATE(char, length + 1);
+    memcpy(chars, a->chars, a->length);
+    memcpy(chars + a->length, b->chars, b->length);
+    chars[length] = '\0';
+
+    ObjString* result = takeString(chars, length);
+
+    // Print the result
+    printf("%s\n", result->chars);
+
+    return OBJ_VAL(result);
+}
+
 
 void initVM() {
   resetStack();
@@ -64,6 +103,7 @@ void initVM() {
   vm.initString = copyString("init", 4);
 
   defineNative("clock", clockNative);
+  defineNativeFunctions();  // Call to defineNative for the combine function
 }
 
 void freeVM() {
