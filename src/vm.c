@@ -5,57 +5,68 @@
 #include <time.h>
 #include "compiler.h"
 #include "memory.h"
+
+// Global VM instance
 VM vm;
 
+// Function prototypes
 void defineNative(const char* name, NativeFn function);
 Value combineNative(int argCount, Value* args);
 
+// Native function to get the current time in seconds
 Value clockNative(int argCount, Value* args) {
-  return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+    return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
 }
 
+// Reset the VM stack and frame count
 void resetStack() {
-  vm.stackTop = vm.stack;
-  vm.frameCount = 0;
-  vm.openUpvalues = NULL;
+    vm.stackTop = vm.stack;
+    vm.frameCount = 0;
+    vm.openUpvalues = NULL;
 }
 
+// Report a runtime error with formatted output
 void runtimeError(const char* format, ...) {
-  va_list args;
-  va_start(args, format);
-  vfprintf(stderr, format, args);
-  va_end(args);
-  fputs("\n", stderr);
+    va_list args;
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    fputs("\n", stderr);
 
-  for (int i = vm.frameCount - 1; i >= 0; i--) {
-    CallFrame* frame = &vm.frames[i];
-    ObjFunction* function = frame->closure->function;
-    size_t instruction = frame->ip - function->chunk.code - 1;
-    fprintf(stderr, "[line %d] in ", function->chunk.lines[instruction]);
-    if (function->name == NULL) {
-      fprintf(stderr, "script\n");
-    } else {
-      fprintf(stderr, "%s()\n", function->name->chars);
+    // Print information about the call stack
+    for (int i = vm.frameCount - 1; i >= 0; i--) {
+        CallFrame* frame = &vm.frames[i];
+        ObjFunction* function = frame->closure->function;
+        size_t instruction = frame->ip - function->chunk.code - 1;
+        fprintf(stderr, "[line %d] in ", function->chunk.lines[instruction]);
+        if (function->name == NULL) {
+            fprintf(stderr, "script\n");
+        } else {
+            fprintf(stderr, "%s()\n", function->name->chars);
+        }
     }
-  }
 
-  resetStack();
+    // Reset the stack after reporting the error
+    resetStack();
 }
 
+// Define a native function and add it to the global scope
 void defineNative(const char* name, NativeFn function) {
-  push(OBJ_VAL(copyString(name, (int)strlen(name))));
-  push(OBJ_VAL(newNative(function)));
+    push(OBJ_VAL(copyString(name, (int)strlen(name))));
+    push(OBJ_VAL(newNative(function)));
     setInstance(&vm.globals, AS_STRING(vm.stack[0]), vm.stack[1]);
-  pop();
-  pop();
+    pop();
+    pop();
 }
 
+// Define all native functions in the global scope
 void defineNativeFunctions() {
     defineNative("clock", clockNative);
     defineNative("combine", combineNative);
     // Add other native functions as needed
 }
 
+// Native function to concatenate two strings
 Value combineNative(int argCount, Value* args) {
     if (argCount != 2) {
         runtimeError("combine() takes exactly 2 arguments.");
@@ -85,121 +96,129 @@ Value combineNative(int argCount, Value* args) {
     return OBJ_VAL(result);
 }
 
-
+// Initialize the VM
 void initVM() {
-  resetStack();
-  vm.objects = NULL;
-  vm.bytesAllocated = 0;
-  vm.nextGC = 1024 * 1024;
+    resetStack();
+    vm.objects = NULL;
+    vm.bytesAllocated = 0;
+    vm.nextGC = 1024 * 1024;
 
-  vm.grayCount = 0;
-  vm.grayCapacity = 0;
-  vm.grayStack = NULL;
+    vm.grayCount = 0;
+    vm.grayCapacity = 0;
+    vm.grayStack = NULL;
 
     initInstance(&vm.globals);
     initInstance(&vm.strings);
 
-  vm.initString = NULL;
-  vm.initString = copyString("init", 4);
+    vm.initString = copyString("init", 4);
 
-  defineNative("clock", clockNative);
-  defineNativeFunctions();  // Call to defineNative for the combine function
+    defineNative("clock", clockNative);
+    defineNativeFunctions();  // Call to defineNative for the combine function
 }
 
+// Free memory used by the VM
 void freeVM() {
     freeInstance(&vm.globals);
     freeInstance(&vm.strings);
-  vm.initString = NULL;
-  freeObjects();
+    vm.initString = NULL;
+    freeObjects();
 }
 
+// Push a value onto the VM stack
 void push(Value value) {
-  *vm.stackTop = value;
-  vm.stackTop++;
+    *vm.stackTop = value;
+    vm.stackTop++;
 }
 
+// Pop a value from the VM stack
 Value pop() {
-  vm.stackTop--;
-  return *vm.stackTop;
+    vm.stackTop--;
+    return *vm.stackTop;
 }
 
-static Value peek(int distance) { return vm.stackTop[-1 - distance]; }
+// Peek at a value on the VM stack without popping it
+static Value peek(int distance) {
+    return vm.stackTop[-1 - distance];
+}
 
+// Call a closure with a specific number of arguments
 static bool call(ObjClosure* closure, int argCount) {
-  if (argCount != closure->function->arity) {
-    runtimeError("Expected %d arguments but got %d.", closure->function->arity,
-                 argCount);
-    return false;
-  }
-
-  if (vm.frameCount == FRAMES_MAX) {
-    runtimeError("Stack overflow.");
-    return false;
-  }
-
-  CallFrame* frame = &vm.frames[vm.frameCount++];
-  frame->closure = closure;
-  frame->ip = closure->function->chunk.code;
-  frame->slots = vm.stackTop - argCount - 1;
-  return true;
-}
-
-static bool callValue(Value callee, int argCount) {
-  if (IS_OBJ(callee)) {
-    switch (OBJ_TYPE(callee)) {
-      case OBJ_CLOSURE:
-        return call(AS_CLOSURE(callee), argCount);
-      case OBJ_NATIVE: {
-        NativeFn native = AS_NATIVE(callee);
-        Value result = native(argCount, vm.stackTop - argCount);
-        vm.stackTop -= argCount + 1;
-        push(result);
-        return true;
-      }
-      default:
-        break;  // Non-callable object type.
+    if (argCount != closure->function->arity) {
+        runtimeError("Expected %d arguments but got %d.", closure->function->arity, argCount);
+        return false;
     }
-  }
-  runtimeError("Can only call stories");
-  return false;
+
+    if (vm.frameCount == FRAMES_MAX) {
+        runtimeError("Stack overflow.");
+        return false;
+    }
+
+    CallFrame* frame = &vm.frames[vm.frameCount++];
+    frame->closure = closure;
+    frame->ip = closure->function->chunk.code;
+    frame->slots = vm.stackTop - argCount - 1;
+    return true;
 }
 
+// Call a value as a function with a specific number of arguments
+static bool callValue(Value callee, int argCount) {
+    if (IS_OBJ(callee)) {
+        switch (OBJ_TYPE(callee)) {
+            case OBJ_CLOSURE:
+                return call(AS_CLOSURE(callee), argCount);
+            case OBJ_NATIVE: {
+                NativeFn native = AS_NATIVE(callee);
+                Value result = native(argCount, vm.stackTop - argCount);
+                vm.stackTop -= argCount + 1;
+                push(result);
+                return true;
+            }
+            default:
+                break;  // Non-callable object type.
+        }
+    }
+    runtimeError("Can only call stories");
+    return false;
+}
+
+// Capture an upvalue from the local stack
 static ObjUpvalue* captureUpvalue(Value* local) {
-  ObjUpvalue* prevUpvalue = NULL;
-  ObjUpvalue* upvalue = vm.openUpvalues;
-  while (upvalue != NULL && upvalue->location > local) {
-    prevUpvalue = upvalue;
-    upvalue = upvalue->next;
-  }
-
-  if (upvalue != NULL && upvalue->location == local) {
-    return upvalue;
-  }
-
-  ObjUpvalue* createdUpvalue = newUpvalue(local);
-  createdUpvalue->next = upvalue;
-
-  if (prevUpvalue == NULL) {
-    vm.openUpvalues = createdUpvalue;
-  } else {
-    prevUpvalue->next = createdUpvalue;
-  }
-
-  return createdUpvalue;
-}
-
-static void closeUpvalues(Value* last) {
-  while (vm.openUpvalues != NULL && vm.openUpvalues->location >= last) {
+    ObjUpvalue* prevUpvalue = NULL;
     ObjUpvalue* upvalue = vm.openUpvalues;
-    upvalue->closed = *upvalue->location;
-    upvalue->location = &upvalue->closed;
-    vm.openUpvalues = upvalue->next;
-  }
+    while (upvalue != NULL && upvalue->location > local) {
+        prevUpvalue = upvalue;
+        upvalue = upvalue->next;
+    }
+
+    if (upvalue != NULL && upvalue->location == local) {
+        return upvalue;
+    }
+
+    ObjUpvalue* createdUpvalue = newUpvalue(local);
+    createdUpvalue->next = upvalue;
+
+    if (prevUpvalue == NULL) {
+        vm.openUpvalues = createdUpvalue;
+    } else {
+        prevUpvalue->next = createdUpvalue;
+    }
+
+    return createdUpvalue;
 }
 
+// Close upvalues until a certain point in the stack
+static void closeUpvalues(Value* last) {
+    while (vm.openUpvalues != NULL && vm.openUpvalues->location >= last) {
+        ObjUpvalue* upvalue = vm.openUpvalues;
+        upvalue->closed = *upvalue->location;
+        upvalue->location = &upvalue->closed;
+        vm.openUpvalues = upvalue->next;
+    }
+}
 
+// Check if a value is falsy
 static bool isFalsy(Value value) {
-  return IS_NIL(value) || (IS_BOOL(value) && !AS_BOOL(value));
+    return IS_NIL(value) || (IS_BOOL(value));
 }
 
 static void concatenate() {
