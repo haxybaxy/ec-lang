@@ -162,7 +162,6 @@ static Token string() {
     return makeToken(TOKEN_STRING);
 }
 
-
 // Main function to scan the next token in the source code
 Token scanToken() {
     skipWhitespace();       // Skip over whitespace and comments
