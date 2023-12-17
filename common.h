@@ -1,12 +1,18 @@
-//
-// Created by Zaid Saheb on 9/12/23.
-//
-
-#ifndef EC_LANG_COMMON_H
-#define EC_LANG_COMMON_H
+#ifndef _CLOX_COMMON_H_
+#define _CLOX_COMMON_H_
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-#endif //EC_LANG_COMMON_H
+#define NAN_BOXING
+
+// #define DEBUG_PRINT_CODE
+// #define DEBUG_TRACE_EXECUTION
+
+// #define DEBUG_STRESS_GC
+// #define DEBUG_LOG_GC
+
+#define UINT8_COUNT (UINT8_MAX + 1)
+
+#endif
