@@ -1,7 +1,5 @@
 #include "helper.h"
-
 #include <string.h>
-
 #include "memory.h"
 
 
@@ -97,15 +95,6 @@ bool deleteInstance(Table* table, ObjString* key) {
   entry->key = NULL;
   entry->value = BOOL_VAL(true);
   return true;
-}
-
-void tableAddAll(Table* from, Table* to) {
-  for (int i = 0; i < from->capacity; i++) {
-    Entry* entry = &from->entries[i];
-    if (entry->key != NULL) {
-        setInstance(to, entry->key, entry->value);
-    }
-  }
 }
 
 ObjString* findStringInstance(Table* table, const char* chars, int length,

@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "chunk.h"
 #include "vm.h"
 
 #define BUFFER_SIZE 1024
