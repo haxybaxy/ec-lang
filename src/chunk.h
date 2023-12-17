@@ -1,5 +1,5 @@
-#ifndef _CLOX_CHUNK_H_
-#define _CLOX_CHUNK_H_
+#ifndef _CHUNK_H_
+#define _CHUNK_H_
 
 #include "common.h"
 #include "value.h"
@@ -20,7 +20,6 @@ typedef enum {
   OP_GET_PROPERTY,
   OP_SET_PROPERTY,
   OP_GET_SUPER,
-  OP_SIZEOF,
   OP_EQUAL,
   OP_GREATER,
   OP_LESS,
@@ -40,7 +39,7 @@ typedef enum {
   OP_CLOSURE,
   OP_CLOSE_UPVALUE,
   OP_RETURN,
-  OP_CLASS,
+//  OP_CLASS,
   OP_INHERIT,
   OP_METHOD
 } OpCode;

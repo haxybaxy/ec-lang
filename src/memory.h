@@ -1,5 +1,5 @@
-#ifndef _CLOX_MEMORY_H_
-#define _CLOX_MEMORY_H_
+#ifndef _MEMORY_H_
+#define _MEMORY_H_
 
 #include "common.h"
 #include "object.h"
@@ -8,9 +8,9 @@
 
 #define FREE(type, pointer) reallocate(pointer, sizeof(type), 0)
 
-#define GROW_CAPACITY(capacity) ((capacity) < 8 ? 8 : (capacity)*2)
+#define INCREASE_CAPACITY(capacity) ((capacity) < 8 ? 8 : (capacity)*2)
 
-#define GROW_ARRAY(type, pointer, oldCount, newCount)   \
+#define INCREASE_ARRAY(type, pointer, oldCount, newCount)   \
   (type*)reallocate(pointer, sizeof(type) * (oldCount), \
                     sizeof(type) * (newCount))
 

@@ -1,5 +1,5 @@
-#ifndef _CLOX_SCANNER_H_
-#define _CLOX_SCANNER_H_
+#ifndef _SCANNER_H_
+#define _SCANNER_H_
 
 typedef enum {
   // Single-character tokens.
@@ -18,7 +18,6 @@ typedef enum {
   // One or two character tokens.
   TOKEN_BANG,
   TOKEN_BANG_EQUAL,
-  TOKEN_SIZEOF,
   TOKEN_EQUAL,
   TOKEN_EQUAL_EQUAL,
   TOKEN_GREATER,
@@ -43,8 +42,6 @@ typedef enum {
   TOKEN_OR,
   TOKEN_PRINT,
   TOKEN_RETURN,
-  TOKEN_SUPER,
-  TOKEN_THIS,
   TOKEN_TRUE,
   TOKEN_VAR,
   TOKEN_WHILE,
