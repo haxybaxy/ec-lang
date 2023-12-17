@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "chunk.h"
 #include "vm.h"
 
 #define BUFFER_SIZE 1024
 
+// Interactive REPL (Read-Eval-Print Loop)
 static void repl() {
     char line[BUFFER_SIZE];
     while (printf("> "), fgets(line, sizeof(line), stdin)) {
@@ -14,6 +13,7 @@ static void repl() {
     printf("\n");
 }
 
+// Reads the content of a file and returns it as a string.
 static char* readFile(const char* path) {
     FILE* file = fopen(path, "rb");
     if (!file) {
@@ -45,6 +45,7 @@ static char* readFile(const char* path) {
     return buffer;
 }
 
+// Runs the script from a file and handles interpreter errors.
 static void runFile(const char* path) {
     char* source = readFile(path);
     InterpretResult result = interpret(source);
@@ -54,19 +55,19 @@ static void runFile(const char* path) {
     if (result == INTERPRET_RUNTIME_ERROR) exit(70);
 }
 
+// Entry point of the program.
 int main(int argc, const char* argv[]) {
-    initVM();
+    initVM(); // Initialize the Virtual Machine.
 
     if (argc == 1) {
-        repl();
+        repl(); // Start the REPL if no command-line arguments are provided.
     } else if (argc == 2) {
-        runFile(argv[1]);
+        runFile(argv[1]); // Run the script if a file path is provided as an argument.
     } else {
-        fprintf(stderr, "Usage: kids [path]\n");
-        exit(64);
+        fprintf(stderr, "Usage: eclang [path]\n");
+        exit(64); // Exit with an error code for incorrect command-line usage.
     }
 
-    freeVM();
-    return 0; // Explicit return statement for clarity
+    freeVM(); // Free resources used by the Virtual Machine.
+    return 0; // Explicit return statement for clarity.
 }
-

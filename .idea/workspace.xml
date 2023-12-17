@@ -20,6 +20,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
+    <list default="true" id="3ab2256f-9cd2-48ea-a127-7c6c8a531a42" name="Changes" comment="reformatted value">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/helper.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/helper.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/memory.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/memory.c" afterDir="false" />
     <list default="true" id="3ab2256f-9cd2-48ea-a127-7c6c8a531a42" name="Changes" comment="added examples">
       <change beforePath="$PROJECT_DIR$/examples/ifStatement.ec" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ifStatement.ec" afterDir="false" />
     </list>
@@ -68,6 +72,8 @@
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+
+    "git-widget-placeholder": "removedebug",
     "git-widget-placeholder": "examples2",
     "last_opened_file_path": "/Users/zaidsaheb/Desktop/ec-lang",
     "node.js.detected.package.eslint": "true",
@@ -135,6 +141,31 @@
       <option name="project" value="LOCAL" />
       <updated>1702829600061</updated>
     </task>
+    <task id="LOCAL-00004" summary="reformatted value">
+      <option name="closed" value="true" />
+      <created>1702829991935</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1702829991935</updated>
+    </task>
+    <task id="LOCAL-00005" summary="reformatted value">
+      <option name="closed" value="true" />
+      <created>1702830442436</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1702830442436</updated>
+    </task>
+    <task id="LOCAL-00006" summary="reformatted value">
+      <option name="closed" value="true" />
+      <created>1702832335508</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1702832335508</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <task id="LOCAL-00004" summary="added examples">
       <option name="closed" value="true" />
       <created>1702837773750</created>
@@ -158,6 +189,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="new edition" />
     <MESSAGE value="reformatted chunk and example" />
+    <MESSAGE value="reformatted value" />
+    <option name="LAST_COMMIT_MESSAGE" value="reformatted value" />
     <MESSAGE value="added examples" />
     <option name="LAST_COMMIT_MESSAGE" value="added examples" />
   </component>
