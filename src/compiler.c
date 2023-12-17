@@ -251,136 +251,158 @@ static void beginScope() {
     current->scopeDepth++;
 }
 
+// This function is responsible for ending the current scope.
 static void endScope() {
-  current->scopeDepth--;
+    current->scopeDepth--;
 
-  while (current->localCount > 0 &&
-         current->locals[current->localCount - 1].depth > current->scopeDepth) {
-    if (current->locals[current->localCount - 1].isCaptured) {
-      emitByte(OP_CLOSE_UPVALUE);
-    } else {
-      emitByte(OP_POP);
+    // Pop local variables until we reach the current scope depth.
+    while (current->localCount > 0 &&
+           current->locals[current->localCount - 1].depth > current->scopeDepth) {
+        // If the local variable is captured by an upvalue, emit OP_CLOSE_UPVALUE.
+        // Otherwise, simply pop the local variable from the stack using OP_POP.
+        if (current->locals[current->localCount - 1].isCaptured) {
+            emitByte(OP_CLOSE_UPVALUE);
+        } else {
+            emitByte(OP_POP);
+        }
+        current->localCount--;
     }
-    current->localCount--;
-  }
 }
 
+// Function declarations for various parsing tasks.
 static void expression();
 static void statement();
 static void declaration();
 static ParseRule* getRule(TokenType type);
 static void parsePrecedence(Precedence precedence);
 
+// Converts an identifier token into a constant value and adds it to the constants array.
 static uint8_t identifierConstant(Token* name) {
-  return makeConstant(OBJ_VAL(copyString(name->start, name->length)));
+    return makeConstant(OBJ_VAL(copyString(name->start, name->length)));
 }
 
+// Checks if two identifier tokens are equal by comparing their lengths and content.
 static bool identifiersEqual(Token* a, Token* b) {
-  if (a->length != b->length) return false;
-  return memcmp(a->start, b->start, a->length) == 0;
+    if (a->length != b->length) return false;
+    return memcmp(a->start, b->start, a->length) == 0;
 }
 
+// Resolves a local variable in the current compiler scope.
 static int resolveLocal(Compiler* compiler, Token* name) {
-  for (int i = compiler->localCount - 1; i >= 0; i--) {
-    Local* local = &compiler->locals[i];
-    if (identifiersEqual(name, &local->name)) {
-      if (local->depth == -1) {
-        error("Can't read local variable in its own initializer.");
-      }
-      return i;
+    for (int i = compiler->localCount - 1; i >= 0; i--) {
+        Local* local = &compiler->locals[i];
+        if (identifiersEqual(name, &local->name)) {
+            // Ensure that a local variable is not read in its own initializer.
+            if (local->depth == -1) {
+                error("Can't read local variable in its own initializer.");
+            }
+            return i;
+        }
     }
-  }
 
-  return -1;
+    return -1;
 }
 
+// Adds an upvalue to the current compiler's function.
 static int addUpvalue(Compiler* compiler, uint8_t index, bool isLocal) {
-  int upvalueCount = compiler->function->upvalueCount;
+    int upvalueCount = compiler->function->upvalueCount;
 
-  for (int i = 0; i < upvalueCount; i++) {
-    Upvalue* upvalue = &compiler->upvalues[i];
-    if (upvalue->index == index && upvalue->isLocal == isLocal) {
-      return i;
+    for (int i = 0; i < upvalueCount; i++) {
+        Upvalue* upvalue = &compiler->upvalues[i];
+        if (upvalue->index == index && upvalue->isLocal == isLocal) {
+            return i;
+        }
     }
-  }
 
-  if (upvalueCount == UINT8_COUNT) {
-    error("Too many closure variables in function.");
-    return 0;
-  }
+    // Ensure that the number of closure variables does not exceed the limit.
+    if (upvalueCount == UINT8_COUNT) {
+        error("Too many closure variables in function.");
+        return 0;
+    }
 
-  compiler->upvalues[upvalueCount].isLocal = isLocal;
-  compiler->upvalues[upvalueCount].index = index;
-  return compiler->function->upvalueCount++;
+    compiler->upvalues[upvalueCount].isLocal = isLocal;
+    compiler->upvalues[upvalueCount].index = index;
+    return compiler->function->upvalueCount++;
 }
 
+// Resolves an upvalue for a variable in the enclosing scope.
 static int resolveUpvalue(Compiler* compiler, Token* name) {
-  if (compiler->enclosing == NULL) return -1;
+    if (compiler->enclosing == NULL) return -1;
 
-  int local = resolveLocal(compiler->enclosing, name);
-  if (local != -1) {
-    compiler->enclosing->locals[local].isCaptured = true;
-    return addUpvalue(compiler, (uint8_t)local, true);
-  }
+    int local = resolveLocal(compiler->enclosing, name);
+    if (local != -1) {
+        // If the variable is found in the local scope of the enclosing compiler,
+        // mark it as captured and add it as an upvalue in the current function.
+        compiler->enclosing->locals[local].isCaptured = true;
+        return addUpvalue(compiler, (uint8_t)local, true);
+    }
 
-  int upvalue = resolveUpvalue(compiler->enclosing, name);
-  if (upvalue != -1) {
-    return addUpvalue(compiler, (uint8_t)upvalue, false);
-  }
+    int upvalue = resolveUpvalue(compiler->enclosing, name);
+    if (upvalue != -1) {
+        // If the variable is found as an upvalue in the enclosing scope,
+        // add it as an upvalue in the current function.
+        return addUpvalue(compiler, (uint8_t)upvalue, false);
+    }
 
-  return -1;
+    return -1;
 }
 
+// Adds a local variable to the current compiler's locals array.
 static void addLocal(Token name) {
-  if (current->localCount == UINT8_COUNT) {
-    error("Too many local variables in function.");
-    return;
-  }
+    if (current->localCount == UINT8_COUNT) {
+        error("Too many local variables in function.");
+        return;
+    }
 
-  Local* local = &current->locals[current->localCount++];
-  local->name = name;
-  local->depth = -1;
-  local->isCaptured = false;
+    Local* local = &current->locals[current->localCount++];
+    local->name = name;
+    local->depth = -1;
+    local->isCaptured = false;
 }
 
+// Declares a variable in the current scope.
 static void declareVariable() {
-  if (current->scopeDepth == 0) return;
+    if (current->scopeDepth == 0) return;
 
-  Token* name = &parser.previous;
-  for (int i = current->localCount - 1; i >= 0; i--) {
-    Local* local = &current->locals[i];
-    if (local->depth != -1 && local->depth < current->scopeDepth) {
-      break;
-    }
+    Token* name = &parser.previous;
+    for (int i = current->localCount - 1; i >= 0; i--) {
+        Local* local = &current->locals[i];
+        if (local->depth != -1 && local->depth < current->scopeDepth) {
+            break;
+        }
 
-    if (identifiersEqual(name, &local->name)) {
-      error("Already a variable with this name in this scope.");
+        // Check for variable name conflicts within the current scope.
+        if (identifiersEqual(name, &local->name)) {
+            error("Already a variable with this name in this scope.");
+        }
     }
-  }
-  addLocal(*name);
+    addLocal(*name);
 }
 
+// Parses a variable and returns its constant index.
 static uint8_t parseVariable(const char* errorMessage) {
-  consume(TOKEN_IDENTIFIER, errorMessage);
+    consume(TOKEN_IDENTIFIER, errorMessage);
 
-  declareVariable();
-  if (current->scopeDepth > 0) return 0;
+    declareVariable();
+    if (current->scopeDepth > 0) return 0;
 
-  return identifierConstant(&parser.previous);
+    return identifierConstant(&parser.previous);
 }
 
+// Marks the most recent local variable as initialized within its scope.
 static void markInitialized() {
-  if (current->scopeDepth == 0) return;
-  current->locals[current->localCount - 1].depth = current->scopeDepth;
+    if (current->scopeDepth == 0) return;
+    current->locals[current->localCount - 1].depth = current->scopeDepth;
 }
 
+// Defines a variable by emitting the appropriate bytecode instruction.
 static void defineVariable(uint8_t global) {
-  if (current->scopeDepth > 0) {
-    markInitialized();
-    return;
-  }
+    if (current->scopeDepth > 0) {
+        markInitialized();
+        return;
+    }
 
-  emitBytes(OP_DEFINE_GLOBAL, global);
+    emitBytes(OP_DEFINE_GLOBAL, global);
 }
 
 static uint8_t argumentList() {
