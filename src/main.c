@@ -64,7 +64,7 @@ int main(int argc, const char* argv[]) {
     } else if (argc == 2) {
         runFile(argv[1]); // Run the script if a file path is provided as an argument.
     } else {
-        fprintf(stderr, "Usage: kids [path]\n");
+        fprintf(stderr, "Usage: eclang [path]\n");
         exit(64); // Exit with an error code for incorrect command-line usage.
     }
 
