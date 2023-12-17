@@ -10,14 +10,14 @@ action fib(n) {
   if (n <= 1) give n;
   give fib(n - 2) + fib(n - 1);
 }
-for (my i = 0; i < 20; i = i + 1) {
+for (store i = 0; i < 20; i = i + 1) {
   say fib(i);
 }
 
 say "** Function 3: closure **";
 action keepCount() {
   store i = 0;
-  story count() {
+  action count() {
     i = i + 1;
     show i;
   }
@@ -25,7 +25,7 @@ action keepCount() {
   return count;
 }
 store counter = keepCount();
-for (my j = 0; j < 10; j = j + 1) {
+for (store j = 0; j < 10; j = j + 1) {
   counter();
 }
 
