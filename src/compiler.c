@@ -7,215 +7,249 @@
 #include "memory.h"
 #include "scanner.h"
 
-
+// Structure to track parsing information
 typedef struct {
-  Token current;
-  Token previous;
-  bool hadError;
-  bool panicMode;
+    Token current;    // Current token being parsed
+    Token previous;   // Previous token
+    bool hadError;    // Flag indicating whether an error has occurred
+    bool panicMode;   // Flag indicating panic mode (error recovery mode)
 } Parser;
 
+// Enumeration representing the precedence levels of operators
 typedef enum {
-  PREC_NONE,
-  PREC_ASSIGNMENT,  // "="
-  PREC_OR,          // "or"
-  PREC_AND,         // "and"
-  PREC_EQUALITY,    // "==", "!="
-  PREC_COMPARISON,  // "<", ">", "<=", ">="
-  PREC_TERM,        // "+", "-"
-  PREC_FACTOR,      // "*", "/"
-  PREC_UNARY,       // "!", "-"
-  PREC_CALL,        // ".", "()"
-  PREC_PRIMARY,
+    PREC_NONE,
+    PREC_ASSIGNMENT,
+    PREC_OR,
+    PREC_AND,
+    PREC_EQUALITY,
+    PREC_COMPARISON,
+    PREC_TERM,
+    PREC_FACTOR,
+    PREC_UNARY,
+    PREC_CALL,
+    PREC_PRIMARY,
 } Precedence;
 
+// Function pointer type for parsing prefix and infix expressions
 typedef void (*ParseFn)(bool canAssign);
 
+// Rule for parsing expressions
 typedef struct {
-  ParseFn prefix;
-  ParseFn infix;
-  Precedence precedence;
+    ParseFn prefix;
+    ParseFn infix;
+    Precedence precedence;
 } ParseRule;
 
+// Structure representing a local variable
 typedef struct {
-  Token name;
-  int depth;
-  bool isCaptured;
+    Token name;
+    int depth;
+    bool isCaptured;
 } Local;
 
+// Structure representing an upvalue
 typedef struct {
-  uint8_t index;
-  bool isLocal;
+    uint8_t index;
+    bool isLocal;
 } Upvalue;
 
+// Enumeration representing the type of a function
 typedef enum {
-  TYPE_FUNCTION,
-  TYPE_INITIALIZER,
-  TYPE_SCRIPT
+    TYPE_FUNCTION,
+    TYPE_INITIALIZER,
+    TYPE_SCRIPT
 } FunctionType;
 
+// Compiler structure
 typedef struct Compiler {
-  struct Compiler* enclosing;
-  ObjFunction* function;
-  FunctionType type;
-
-  Local locals[UINT8_COUNT];
-  int localCount;
-  Upvalue upvalues[UINT8_COUNT];
-  int scopeDepth;
+    struct Compiler* enclosing;
+    ObjFunction* function;
+    FunctionType type;
+    Local locals[UINT8_COUNT];
+    int localCount;
+    Upvalue upvalues[UINT8_COUNT];
+    int scopeDepth;
 } Compiler;
 
-
+// Global parser instance
 Parser parser;
+
+// Global current compiler instance
 Compiler* current = NULL;
 
-static Chunk* currentChunk() { return &current->function->chunk; }
+// Function to retrieve the current bytecode chunk
+static Chunk* currentChunk() {
+    return &current->function->chunk;
+}
 
+// Function to report an error at a specific token with a given message
 static void errorAt(Token* token, const char* message) {
-  if (parser.panicMode) return;
-  parser.panicMode = true;
-  fprintf(stderr, "[line %d] Error", token->line);
+    if (parser.panicMode) return;
+    parser.panicMode = true;
+    fprintf(stderr, "[line %d] Error", token->line);
 
-  if (token->type == TOKEN_EOF) {
-    fprintf(stderr, " at end");
-  } else if (token->type == TOKEN_ERROR) {
-    // Nothing.
-  } else {
-    fprintf(stderr, " at '%.*s'", token->length, token->start);
-  }
+    if (token->type == TOKEN_EOF) {
+        fprintf(stderr, " at end");
+    } else if (token->type == TOKEN_ERROR) {
+        // Nothing.
+    } else {
+        fprintf(stderr, " at '%.*s'", token->length, token->start);
+    }
 
-  fprintf(stderr, ": %s\n", message);
-  parser.hadError = true;
+    fprintf(stderr, ": %s\n", message);
+    parser.hadError = true;
 }
 
-static void error(const char* message) { errorAt(&parser.previous, message); }
+// Function to report an error at the previous token with a given message
+static void error(const char* message) {
+    errorAt(&parser.previous, message);
+}
 
+// Function to report an error at the current token with a given message
 static void errorAtCurrent(const char* message) {
-  errorAt(&parser.current, message);
+    errorAt(&parser.current, message);
 }
 
+// Function to advance the parser to the next token
 static void advance() {
-  parser.previous = parser.current;
+    parser.previous = parser.current;
 
-  for (;;) {
-    parser.current = scanToken();
-    if (parser.current.type != TOKEN_ERROR) break;
+    for (;;) {
+        parser.current = scanToken();
+        if (parser.current.type != TOKEN_ERROR) break;
 
-    errorAtCurrent(parser.current.start);
-  }
+        errorAtCurrent(parser.current.start);
+    }
 }
 
+// Function to consume the current token if it matches the given type; otherwise, report an error
 static void consume(TokenType type, const char* message) {
-  if (parser.current.type == type) {
-    advance();
-    return;
-  }
+    if (parser.current.type == type) {
+        advance();
+        return;
+    }
 
-  errorAtCurrent(message);
+    errorAtCurrent(message);
 }
 
-static bool check(TokenType type) { return parser.current.type == type; }
+// Function to check if the current token matches the given type
+static bool check(TokenType type) {
+    return parser.current.type == type;
+}
 
+// Function to match the current token with the given type and advance if there is a match
 static bool match(TokenType type) {
-  if (!check(type)) return false;
-  advance();
-  return true;
+    if (!check(type)) return false;
+    advance();
+    return true;
 }
 
+// Function to emit a single bytecode instruction
 static void emitByte(uint8_t byte) {
-  writeChunk(currentChunk(), byte, parser.previous.line);
+    writeChunk(currentChunk(), byte, parser.previous.line);
 }
 
+// Function to emit two consecutive bytecode instructions
 static void emitBytes(uint8_t byte1, uint8_t byte2) {
-  emitByte(byte1);
-  emitByte(byte2);
+    emitByte(byte1);
+    emitByte(byte2);
 }
 
+// Function to emit a loop instruction with the target offset
 static void emitLoop(int loopStart) {
-  emitByte(OP_LOOP);
+    emitByte(OP_LOOP);
 
-  int offset = currentChunk()->count - loopStart + 2;
-  if (offset > UINT16_MAX) error("Loop body too large.");
+    int offset = currentChunk()->count - loopStart + 2;
+    if (offset > UINT16_MAX) error("Loop body too large.");
 
-  emitByte((offset >> 8) & 0xff);
-  emitByte(offset & 0xff);
+    emitByte((offset >> 8) & 0xff);
+    emitByte(offset & 0xff);
 }
 
+// Function to emit a jump instruction with an initial placeholder offset
 static int emitJump(uint8_t instruction) {
-  emitByte(instruction);
-  emitByte(0xff);
-  emitByte(0xff);
-  return currentChunk()->count - 2;
+    emitByte(instruction);
+    emitByte(0xff);
+    emitByte(0xff);
+    return currentChunk()->count - 2;
 }
 
+// Function to emit a return instruction based on the function type
 static void emitReturn() {
-  if (current->type == TYPE_INITIALIZER) {
-    emitBytes(OP_GET_LOCAL, 0);
-  } else {
-    emitByte(OP_NIL);
-  }
+    if (current->type == TYPE_INITIALIZER) {
+        emitBytes(OP_GET_LOCAL, 0);
+    } else {
+        emitByte(OP_NIL);
+    }
 
-  emitByte(OP_RETURN);
+    emitByte(OP_RETURN);
 }
 
+// Function to create a constant value and return its index
 static uint8_t makeConstant(Value value) {
-  int constant = addConstant(currentChunk(), value);
-  if (constant > UINT8_MAX) {
-    error("Too many constants in one chunk.");
-    return 0;
-  }
+    int constant = addConstant(currentChunk(), value);
+    if (constant > UINT8_MAX) {
+        error("Too many constants in one chunk.");
+        return 0;
+    }
 
-  return (uint8_t)constant;
+    return (uint8_t)constant;
 }
 
+// Function to emit a constant instruction with a given constant value
 static void emitConstant(Value value) {
-  emitBytes(OP_CONSTANT, makeConstant(value));
+    emitBytes(OP_CONSTANT, makeConstant(value));
 }
 
+// Function to patch a jump instruction with the correct offset
 static void patchJump(int offset) {
-  // -2 to adjust for the bytecode for the jump offset itself.
-  int jump = currentChunk()->count - offset - 2;
-  if (jump > UINT16_MAX) {
-    error("Too much code to jump over.");
-  }
+    int jump = currentChunk()->count - offset - 2;
+    if (jump > UINT16_MAX) {
+        error("Too much code to jump over.");
+    }
 
-  currentChunk()->code[offset] = (jump >> 8) & 0xff;
-  currentChunk()->code[offset + 1] = jump & 0xff;
+    currentChunk()->code[offset] = (jump >> 8) & 0xff;
+    currentChunk()->code[offset + 1] = jump & 0xff;
 }
 
+// Function to initialize a new compiler instance
 static void initCompiler(Compiler* compiler, FunctionType type) {
-  compiler->enclosing = current;
-  compiler->function = NULL;
-  compiler->type = type;
-  compiler->localCount = 0;
-  compiler->scopeDepth = 0;
-  compiler->function = newFunction();
-  current = compiler;
-  if (type != TYPE_SCRIPT) {
-    current->function->name =
-        copyString(parser.previous.start, parser.previous.length);
-  }
+    compiler->enclosing = current;
+    compiler->function = NULL;
+    compiler->type = type;
+    compiler->localCount = 0;
+    compiler->scopeDepth = 0;
+    compiler->function = newFunction();
+    current = compiler;
+    if (type != TYPE_SCRIPT) {
+        current->function->name =
+                copyString(parser.previous.start, parser.previous.length);
+    }
 
-  Local* local = &current->locals[current->localCount++];
-  local->depth = 0;
-  local->isCaptured = false;
-  if (type != TYPE_FUNCTION) {
-    local->name.start = "this";
-    local->name.length = 4;
-  } else {
-    local->name.start = "";
-    local->name.length = 0;
-  }
+    Local* local = &current->locals[current->localCount++];
+    local->depth = 0;
+    local->isCaptured = false;
+    if (type != TYPE_FUNCTION) {
+        local->name.start = "this";
+        local->name.length = 4;
+    } else {
+        local->name.start = "";
+        local->name.length = 0;
+    }
 }
 
+// Function to finalize the compilation and return the resulting function
 static ObjFunction* endCompiler() {
-  emitReturn();
-  ObjFunction* function = current->function;
-  current = current->enclosing;
-  return function;
+    emitReturn();
+    ObjFunction* function = current->function;
+    current = current->enclosing;
+    return function;
 }
 
-static void beginScope() { current->scopeDepth++; }
+// Function to begin a new scope
+static void beginScope() {
+    current->scopeDepth++;
+}
 
 static void endScope() {
   current->scopeDepth--;
