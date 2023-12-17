@@ -3,6 +3,7 @@
 #include "vm.h"
 
 #define BUFFER_SIZE 1024
+#define BUFFER_SIZE 1024
 
 static void repl() {
     char line[BUFFER_SIZE];
