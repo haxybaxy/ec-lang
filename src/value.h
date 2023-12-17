@@ -1,5 +1,5 @@
-#ifndef _CLOX_VALUE_H_
-#define _CLOX_VALUE_H_
+#ifndef _VALUE_H_
+#define _VALUE_H_
 
 #include <string.h>
 

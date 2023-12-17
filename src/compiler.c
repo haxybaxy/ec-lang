@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "common.h"
 #include "memory.h"
 #include "scanner.h"
 
@@ -55,7 +54,6 @@ typedef struct {
 typedef enum {
   TYPE_FUNCTION,
   TYPE_INITIALIZER,
-  TYPE_METHOD,
   TYPE_SCRIPT
 } FunctionType;
 
@@ -70,14 +68,9 @@ typedef struct Compiler {
   int scopeDepth;
 } Compiler;
 
-typedef struct ClassCompiler {
-  struct ClassCompiler* enclosing;
-  bool hasSuperclass;
-} ClassCompiler;
 
 Parser parser;
 Compiler* current = NULL;
-ClassCompiler* currentClass = NULL;
 
 static Chunk* currentChunk() { return &current->function->chunk; }
 
@@ -250,7 +243,7 @@ static void endScope() {
   }
 }
 
-void expression();
+static void expression();
 static void statement();
 static void declaration();
 static ParseRule* getRule(TokenType type);
@@ -470,15 +463,6 @@ static void literal(bool canAssign) {
   }
 }
 
-static void varHowBig() {
-    // ... other expression parsing logic
-
-    if (match(TOKEN_SIZEOF)) {
-        // Handle "howbig" logic, maybe generate bytecode or perform some action
-        // For example:
-        emitByte(OP_SIZEOF); // Assuming OP_SIZEOF is your bytecode instruction
-    }
-}
 static void grouping(bool canAssign) {
   expression();
   consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
@@ -540,37 +524,6 @@ static Token syntheticToken(const char* text) {
   return token;
 }
 
-static void super_(bool canAssign) {
-  if (currentClass == NULL) {
-    error("Can't use 'super' outside of a class.");
-  } else if (!currentClass->hasSuperclass) {
-    error("Can't use 'super' in a class with no superclass.");
-  }
-
-  consume(TOKEN_DOT, "Expect '.' after 'super'.");
-  consume(TOKEN_IDENTIFIER, "Expect superclass method name.");
-  uint8_t name = identifierConstant(&parser.previous);
-
-  namedVariable(syntheticToken("this"), false);
-  if (match(TOKEN_LEFT_PAREN)) {
-    uint8_t argCount = argumentList();
-    namedVariable(syntheticToken("super"), false);
-    emitBytes(OP_SUPER_INVOKE, name);
-    emitByte(argCount);
-  } else {
-    namedVariable(syntheticToken("super"), false);
-    emitBytes(OP_GET_SUPER, name);
-  }
-}
-
-static void this_(bool canAssign) {
-  if (currentClass == NULL) {
-    error("Can't use 'this' outside of a class.");
-    return;
-  }
-
-  variable(false);
-}
 
 static void unary(bool canAssign) {
   TokenType operatorType = parser.previous.type;
@@ -615,7 +568,6 @@ ParseRule rules[] = {
     [TOKEN_STRING] = {string, NULL, PREC_NONE},
     [TOKEN_NUMBER] = {number, NULL, PREC_NONE},
     [TOKEN_AND] = {NULL, and_, PREC_AND},
-    [TOKEN_CLASS] = {NULL, NULL, PREC_NONE},
     [TOKEN_ELSE] = {NULL, NULL, PREC_NONE},
     [TOKEN_FALSE] = {literal, NULL, PREC_NONE},
     [TOKEN_FOR] = {NULL, NULL, PREC_NONE},
@@ -625,8 +577,6 @@ ParseRule rules[] = {
     [TOKEN_OR] = {NULL, or_, PREC_OR},
     [TOKEN_PRINT] = {NULL, NULL, PREC_NONE},
     [TOKEN_RETURN] = {NULL, NULL, PREC_NONE},
-    [TOKEN_SUPER] = {super_, NULL, PREC_NONE},
-    [TOKEN_THIS] = {this_, NULL, PREC_NONE},
     [TOKEN_TRUE] = {literal, NULL, PREC_NONE},
     [TOKEN_VAR] = {NULL, NULL, PREC_NONE},
     [TOKEN_WHILE] = {NULL, NULL, PREC_NONE},
@@ -659,9 +609,7 @@ static void parsePrecedence(Precedence precedence) {
 
 static ParseRule* getRule(TokenType type) { return &rules[type]; }
 
-void expression() {
-    parsePrecedence(PREC_ASSIGNMENT);
-}
+static void expression() { parsePrecedence(PREC_ASSIGNMENT); }
 
 static void block() {
   while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF)) {
@@ -698,66 +646,6 @@ static void function(FunctionType type) {
     emitByte(compiler.upvalues[i].isLocal ? 1 : 0);
     emitByte(compiler.upvalues[i].index);
   }
-}
-
-static void method() {
-  consume(TOKEN_IDENTIFIER, "Expect method name.");
-  uint8_t constant = identifierConstant(&parser.previous);
-
-  FunctionType type = TYPE_METHOD;
-  if (parser.previous.length == 4 &&
-      memcmp(parser.previous.start, "init", 4) == 0) {
-    type = TYPE_INITIALIZER;
-  }
-
-  function(type);
-  emitBytes(OP_METHOD, constant);
-}
-
-static void classDeclaration() {
-  consume(TOKEN_IDENTIFIER, "Expect class name.");
-  Token className = parser.previous;
-  uint8_t nameConstant = identifierConstant(&parser.previous);
-  declareVariable();
-
-  emitBytes(OP_CLASS, nameConstant);
-  defineVariable(nameConstant);
-
-  ClassCompiler classCompiler;
-  classCompiler.hasSuperclass = false;
-  classCompiler.enclosing = currentClass;
-  currentClass = &classCompiler;
-
-  if (match(TOKEN_LESS)) {
-    consume(TOKEN_IDENTIFIER, "Expect superclass name.");
-    variable(false);
-
-    if (identifiersEqual(&className, &parser.previous)) {
-      error("A class can't inherit from itself.");
-    }
-
-    beginScope();
-    addLocal(syntheticToken("super"));
-    defineVariable(0);
-
-    namedVariable(className, false);
-    emitByte(OP_INHERIT);
-    classCompiler.hasSuperclass = true;
-  }
-
-  namedVariable(className, false);
-  consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
-  while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF)) {
-    method();
-  }
-  consume(TOKEN_RIGHT_BRACE, "Expect '}' after class body.");
-  emitByte(OP_POP);
-
-  if (classCompiler.hasSuperclass) {
-    endScope();
-  }
-
-  currentClass = currentClass->enclosing;
 }
 
 static void funDeclaration() {
@@ -894,7 +782,6 @@ static void synchronize() {
   while (parser.current.type != TOKEN_EOF) {
     if (parser.previous.type == TOKEN_SEMICOLON) return;
     switch (parser.current.type) {
-      case TOKEN_CLASS:
       case TOKEN_FUN:
       case TOKEN_VAR:
       case TOKEN_FOR:
@@ -912,9 +799,7 @@ static void synchronize() {
 }
 
 static void declaration() {
-  if (match(TOKEN_CLASS)) {
-    classDeclaration();
-  } else if (match(TOKEN_FUN)) {
+    if (match(TOKEN_FUN)) {
     funDeclaration();
   } else if (match(TOKEN_VAR)) {
     varDeclaration();

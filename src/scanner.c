@@ -92,12 +92,17 @@ static TokenType identifierType() {
             {"false", 5, TOKEN_FALSE}, {"for", 3, TOKEN_FOR}, {"fun", 3, TOKEN_FUN},
             {"if", 2, TOKEN_IF}, {"nil", 3, TOKEN_NIL}, {"or", 2, TOKEN_OR},
             {"print", 5, TOKEN_PRINT}, {"return", 6, TOKEN_RETURN},
-            {"true", 4, TOKEN_TRUE}, {"var", 3, TOKEN_VAR}, {"do", 3, TOKEN_WHILE},
+            {"true", 4, TOKEN_TRUE}, {"var", 3, TOKEN_VAR}, {"while", 5, TOKEN_WHILE},
+            {"isgreaterthan", 13, TOKEN_GREATER},
+            {"islessthan", 10, TOKEN_LESS},
+            {"isequal", 7, TOKEN_EQUAL_EQUAL},
+            {"show", 4, TOKEN_PRINT},
+            {"my", 2, TOKEN_VAR},
+            {"multiply", 8, TOKEN_STAR},
+            {"minus", 5, TOKEN_MINUS},
+            {"plus", 4, TOKEN_PLUS},
             {"divide", 6, TOKEN_SLASH},
-            {"is", 2, TOKEN_EQUAL},
-            {"issameas", 8, TOKEN_EQUAL_EQUAL},
-            {"give", 4, TOKEN_RETURN},
-            {"howbig", 6, TOKEN_SIZEOF},  // Replace "sizeof" with "howbig"
+            {"story", 5, TOKEN_FUN},
             {NULL, 0, TOKEN_IDENTIFIER} // Sentinel to mark end of array
     };
 
@@ -117,74 +122,74 @@ static Token identifier() {
 
 
 static Token number() {
+  while (isDigit(peek())) advance();
+
+  // Look for a fractional part.
+  if (peek() == '.' && isDigit(peekNext())) {
+    advance();  // Consume the ".".
+
     while (isDigit(peek())) advance();
+  }
 
-    // Look for a fractional part.
-    if (peek() == '.' && isDigit(peekNext())) {
-        advance();  // Consume the ".".
-
-        while (isDigit(peek())) advance();
-    }
-
-    return makeToken(TOKEN_NUMBER);
+  return makeToken(TOKEN_NUMBER);
 }
 
 static Token string() {
-    while (peek() != '"' && !isAtEnd()) {
-        if (peek() == '\n') scanner.line++;
-        advance();
-    }
+  while (peek() != '"' && !isAtEnd()) {
+    if (peek() == '\n') scanner.line++;
+    advance();
+  }
 
-    if (isAtEnd()) return errorToken("Unterminated string.");
+  if (isAtEnd()) return errorToken("Unterminated string.");
 
-    advance();  // The closing quote.
-    return makeToken(TOKEN_STRING);
+  advance();  // The closing quote.
+  return makeToken(TOKEN_STRING);
 }
 
 Token scanToken() {
-    skipWhitespace();
-    scanner.start = scanner.current;
+  skipWhitespace();
+  scanner.start = scanner.current;
 
-    if (isAtEnd()) return makeToken(TOKEN_EOF);
+  if (isAtEnd()) return makeToken(TOKEN_EOF);
 
-    char c = advance();
-    if (isAlpha(c)) return identifier();
-    if (isDigit(c)) return number();
+  char c = advance();
+  if (isAlpha(c)) return identifier();
+  if (isDigit(c)) return number();
 
-    switch (c) {
-        case '(':
-            return makeToken(TOKEN_LEFT_PAREN);
-        case ')':
-            return makeToken(TOKEN_RIGHT_PAREN);
-        case '{':
-            return makeToken(TOKEN_LEFT_BRACE);
-        case '}':
-            return makeToken(TOKEN_RIGHT_BRACE);
-        case ';':
-            return makeToken(TOKEN_SEMICOLON);
-        case ',':
-            return makeToken(TOKEN_COMMA);
-        case '.':
-            return makeToken(TOKEN_DOT);
-        case '-':
-            return makeToken(TOKEN_MINUS);
-        case '+':
-            return makeToken(TOKEN_PLUS);
-        case '/':
-            return makeToken(TOKEN_SLASH);
-        case '*':
-            return makeToken(TOKEN_STAR);
-        case '!':
-            return makeToken(match('=') ? TOKEN_BANG_EQUAL : TOKEN_BANG);
-        case '=':
-            return makeToken(match('=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL);
-        case '<':
-            return makeToken(match('=') ? TOKEN_LESS_EQUAL : TOKEN_LESS);
-        case '>':
-            return makeToken(match('=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
-        case '"':
-            return string();
-    }
+  switch (c) {
+    case '(':
+      return makeToken(TOKEN_LEFT_PAREN);
+    case ')':
+      return makeToken(TOKEN_RIGHT_PAREN);
+    case '{':
+      return makeToken(TOKEN_LEFT_BRACE);
+    case '}':
+      return makeToken(TOKEN_RIGHT_BRACE);
+    case ';':
+      return makeToken(TOKEN_SEMICOLON);
+    case ',':
+      return makeToken(TOKEN_COMMA);
+    case '.':
+      return makeToken(TOKEN_DOT);
+    case '-':
+      return makeToken(TOKEN_MINUS);
+    case '+':
+      return makeToken(TOKEN_PLUS);
+    case '/':
+      return makeToken(TOKEN_SLASH);
+    case '*':
+      return makeToken(TOKEN_STAR);
+    case '!':
+      return makeToken(match('=') ? TOKEN_BANG_EQUAL : TOKEN_BANG);
+    case '=':
+      return makeToken(match('=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL);
+    case '<':
+      return makeToken(match('=') ? TOKEN_LESS_EQUAL : TOKEN_LESS);
+    case '>':
+      return makeToken(match('=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
+    case '"':
+      return string();
+  }
 
-    return errorToken("Unexpected character.");
+  return errorToken("Unexpected character.");
 }

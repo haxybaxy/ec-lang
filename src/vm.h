@@ -1,14 +1,13 @@
-#ifndef _CLOX_VM_H_
-#define _CLOX_VM_H_
+#ifndef _VM_H_
+#define _VM_H_
 
 #include "chunk.h"
 #include "object.h"
-#include "table.h"
+#include "helper.h"
 #include "value.h"
 
 #define FRAMES_MAX 64
 #define STACK_MAX (FRAMES_MAX * UINT8_COUNT)
-#define OP_COMBINE  0x80  // Replace 0x80 with the actual opcode value
 
 typedef struct {
   ObjClosure* closure;
@@ -48,11 +47,5 @@ void freeVM();
 InterpretResult interpret(const char* source);
 void push(Value value);
 Value pop();
-void resetStack();
-void runtimeError(const char* format, ...);
-void defineNative(const char* name, NativeFn function);
-Value combineNative(int argCount, Value* args);
-Value clockNative(int argCount, Value* args);
-Value concatenateStrings(Value a, Value b);
 
 #endif

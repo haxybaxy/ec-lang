@@ -1,11 +1,15 @@
-cmake_minimum_required(VERSION 3.26)
-project(ec_lang C)
+cmake_minimum_required(VERSION 3.0.0)
+project(eclang) # VERSION 0.0.0-20211225
 
-set(CMAKE_C_STANDARD 11)
-
-add_executable(ec_lang
-        main.c
-        chunk.h
-        chunk.c
-        memory.h
-        memory.c)
+add_executable(eclang
+  src/chunk.c
+        src/compiler.c
+  src/debug.c
+  src/main.c
+  src/memory.c
+  src/object.c
+        src/scanner.c
+        src/helper.c
+  src/value.c
+        src/vm.c
+)
