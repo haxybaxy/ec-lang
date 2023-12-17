@@ -431,6 +431,7 @@ static InterpretResult run() {
     }
   }
 
+// Undefine macros used for reading bytes, shorts, constants, strings, and binary operations
 #undef READ_BYTE
 #undef READ_SHORT
 #undef READ_CONSTANT
@@ -438,15 +439,23 @@ static InterpretResult run() {
 #undef BINARY_OP
 }
 
+// Interpret the source code and execute it
 InterpretResult interpret(const char* source) {
-  ObjFunction* function = compile(source);
-  if (function == NULL) return INTERPRET_COMPILE_ERROR;
+    // Compile the source code into a function
+    ObjFunction* function = compile(source);
+    if (function == NULL) return INTERPRET_COMPILE_ERROR;
 
-  push(OBJ_VAL(function));
-  ObjClosure* closure = newClosure(function);
-  pop();
-  push(OBJ_VAL(closure));
-  call(closure, 0);
+    // Push the function onto the value stack
+    push(OBJ_VAL(function));
 
-  return run();
+    // Create a closure for the function and push it onto the value stack
+    ObjClosure* closure = newClosure(function);
+    pop();
+    push(OBJ_VAL(closure));
+
+    // Call the closure with zero arguments
+    call(closure, 0);
+
+    // Run the interpreter to execute the bytecode
+    return run();
 }
