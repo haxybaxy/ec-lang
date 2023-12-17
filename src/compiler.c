@@ -7,9 +7,6 @@
 #include "memory.h"
 #include "scanner.h"
 
-#ifdef DEBUG_PRINT_CODE
-#include "debug.h"
-#endif
 
 typedef struct {
   Token current;
@@ -214,15 +211,6 @@ static void initCompiler(Compiler* compiler, FunctionType type) {
 static ObjFunction* endCompiler() {
   emitReturn();
   ObjFunction* function = current->function;
-
-#ifdef DEBUG_PRINT_CODE
-  if (!parser.hadError) {
-    char* displayName =
-        function->name != NULL ? function->name->chars : "<script>";
-    disassembleChunk(currentChunk(), displayName);
-  }
-#endif
-
   current = current->enclosing;
   return function;
 }
@@ -431,21 +419,6 @@ static void call(bool canAssign) {
   emitBytes(OP_CALL, argCount);
 }
 
-static void dot(bool canAssign) {
-  consume(TOKEN_IDENTIFIER, "Expect property name after '.'.");
-  uint8_t name = identifierConstant(&parser.previous);
-
-  if (canAssign && match(TOKEN_EQUAL)) {
-    expression();
-    emitBytes(OP_SET_PROPERTY, name);
-  } else if (match(TOKEN_LEFT_PAREN)) {
-    uint8_t argCount = argumentList();
-    emitBytes(OP_INVOKE, name);
-    emitByte(argCount);
-  } else {
-    emitBytes(OP_GET_PROPERTY, name);
-  }
-}
 
 static void literal(bool canAssign) {
   switch (parser.previous.type) {
@@ -550,7 +523,6 @@ ParseRule rules[] = {
     [TOKEN_LEFT_BRACE] = {NULL, NULL, PREC_NONE},
     [TOKEN_RIGHT_BRACE] = {NULL, NULL, PREC_NONE},
     [TOKEN_COMMA] = {NULL, NULL, PREC_NONE},
-    [TOKEN_DOT] = {NULL, dot, PREC_CALL},
     [TOKEN_MINUS] = {unary, binary, PREC_TERM},
     [TOKEN_PLUS] = {NULL, binary, PREC_TERM},
     [TOKEN_SEMICOLON] = {NULL, NULL, PREC_NONE},

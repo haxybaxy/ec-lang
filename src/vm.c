@@ -1,5 +1,4 @@
 #include "vm.h"
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -200,18 +199,6 @@ static InterpretResult run() {
   } while (false)
 
   for (;;) {
-#ifdef DEBUG_TRACE_EXECUTION
-    printf("          ");
-    for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
-      printf("[ ");
-      printValue(*slot);
-      printf(" ]");
-    }
-    printf("\n");
-    disassembleInstruction(
-        &frame->closure->function->chunk,
-        (int)(frame->ip - frame->closure->function->chunk.code));
-#endif
     uint8_t instruction;
     switch (instruction = READ_BYTE()) {
       case OP_CONSTANT: {
