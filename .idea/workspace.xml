@@ -20,10 +20,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3ab2256f-9cd2-48ea-a127-7c6c8a531a42" name="Changes" comment="new edition">
+    <list default="true" id="3ab2256f-9cd2-48ea-a127-7c6c8a531a42" name="Changes" comment="reformatted chunk and example">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/functions.ec" beforeDir="false" afterPath="$PROJECT_DIR$/examples/functions.ec" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chunk.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/chunk.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/value.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/value.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +128,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702827825657</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="reformatted chunk and example">
+      <option name="closed" value="true" />
+      <created>1702829600061</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1702829600061</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -143,6 +150,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="new edition" />
-    <option name="LAST_COMMIT_MESSAGE" value="new edition" />
+    <MESSAGE value="reformatted chunk and example" />
+    <option name="LAST_COMMIT_MESSAGE" value="reformatted chunk and example" />
   </component>
 </project>
