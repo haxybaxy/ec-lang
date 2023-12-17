@@ -93,17 +93,13 @@ static TokenType identifierType() {
             {"if", 2, TOKEN_IF}, {"nil", 3, TOKEN_NIL}, {"or", 2, TOKEN_OR},
             {"print", 5, TOKEN_PRINT}, {"return", 6, TOKEN_RETURN},
             {"true", 4, TOKEN_TRUE}, {"var", 3, TOKEN_VAR}, {"while", 5, TOKEN_WHILE},
-            {"isgreaterthan", 13, TOKEN_GREATER},
-            {"islessthan", 10, TOKEN_LESS},
-            {"isequal", 7, TOKEN_EQUAL_EQUAL},
-            {"show", 4, TOKEN_PRINT},
-            {"my", 2, TOKEN_VAR},
-            {"multiply", 8, TOKEN_STAR},
-            {"minus", 5, TOKEN_MINUS},
-            {"plus", 4, TOKEN_PLUS},
-            {"divide", 6, TOKEN_SLASH},
-            {"story", 5, TOKEN_FUN},
-            {NULL, 0, TOKEN_IDENTIFIER} // Sentinel to mark end of array
+            {"is", 2, TOKEN_EQUAL},
+            {"matches", 7, TOKEN_EQUAL_EQUAL},
+            {"say", 3, TOKEN_PRINT},
+            {"give", 4, TOKEN_RETURN},
+            {"action", 6, TOKEN_FUN},
+            {"store", 5, TOKEN_VAR},
+            {NULL, 0, TOKEN_IDENTIFIER}
     };
 
     int length = scanner.current - scanner.start;
