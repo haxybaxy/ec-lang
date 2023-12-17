@@ -21,7 +21,45 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ab2256f-9cd2-48ea-a127-7c6c8a531a42" name="Changes" comment="added examples">
-      <change beforePath="$PROJECT_DIR$/examples/ifStatement.ec" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ifStatement.ec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.28.0/CMakeDetermineCompilerABI_C.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/CMakeFiles/3.28.0/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.28.0/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/CMakeFiles/3.28.0/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/CMakeConfigureLog.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/build/CMakeFiles/CMakeConfigureLog.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/build/CMakeFiles/CMakeDirectoryInformation.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/build/CMakeFiles/Makefile.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/build/CMakeFiles/Makefile2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/DependInfo.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/build.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/cmake_clean.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/compiler_depend.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/compiler_depend.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/depend.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/flags.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/link.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/progress.make" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/chunk.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/chunk.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/debug.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/debug.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/interpreter.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/interpreter.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/lexer.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/lexer.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/main.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/main.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/memory.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/memory.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/object.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/object.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/parser.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/parser.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/table.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/table.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/value.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/kids.dir/src/value.c.o.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/build/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/build/cmake_install.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,8 +106,8 @@
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "examples2",
-    "last_opened_file_path": "/Users/zaidsaheb/Desktop/ec-lang",
+    "git-widget-placeholder": "working-final",
+    "last_opened_file_path": "/Users/zaidsaheb/Desktop/dist/ec-lang",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -84,9 +122,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="eclang" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="eclang" TARGET_NAME="eclang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="eclang" RUN_TARGET_NAME="eclang">

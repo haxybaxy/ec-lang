@@ -1,3 +1,3 @@
-/Users/zaidsaheb/desktop/ec-lang/build/CMakeFiles/eclang.dir
-/Users/zaidsaheb/desktop/ec-lang/build/CMakeFiles/edit_cache.dir
-/Users/zaidsaheb/desktop/ec-lang/build/CMakeFiles/rebuild_cache.dir
+/Users/zaidsaheb/desktop/dist/ec-lang/build/CMakeFiles/eclang.dir
+/Users/zaidsaheb/desktop/dist/ec-lang/build/CMakeFiles/edit_cache.dir
+/Users/zaidsaheb/desktop/dist/ec-lang/build/CMakeFiles/rebuild_cache.dir
