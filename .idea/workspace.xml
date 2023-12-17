@@ -21,8 +21,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ab2256f-9cd2-48ea-a127-7c6c8a531a42" name="Changes" comment="reformatted chunk and example">
+      <change afterPath="$PROJECT_DIR$/examples/forLoop.ec" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/ifStatement.ec" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/whileLoop.ec" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/value.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/value.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/controlflow.ec" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/functions.ec" beforeDir="false" afterPath="$PROJECT_DIR$/examples/functions.ec" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +40,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="newedition" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -69,7 +73,7 @@
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "examples2",
     "last_opened_file_path": "/Users/zaidsaheb/Desktop/ec-lang",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -85,9 +89,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
     <configuration name="eclang" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="eclang" TARGET_NAME="eclang" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="eclang" RUN_TARGET_NAME="eclang">
