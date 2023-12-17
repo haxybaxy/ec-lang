@@ -1,6 +1,5 @@
 print "** Function 1:  sayJoke**";
-
-action sayJoke(joke, punchline) {
+story sayJoke(joke, punchline) {
   say (joke) + " " + (punchline);
 }
 sayJoke("Why doesn't C get respect from C++ and Java?", "It doesn't have class");
@@ -20,7 +19,7 @@ action keepCount() {
   store i = 0;
   action count() {
     i = i + 1;
-    say i;
+    show i;
   }
 
   return count;
@@ -30,13 +29,12 @@ for (store j = 0; j < 10; j = j + 1) {
   counter();
 }
 
-
-say "** Function 4: squaring **";
+say "** Function 4: squaring **"
 action square(x) {
     give x * x;
 }
 
 store a = 10;
 store b = 20;
-store result = square(a) + b * b - 100;
+store result = square(a) + b * b - 100 / 5 % 8;
 say(result);
