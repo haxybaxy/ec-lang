@@ -1,29 +1,40 @@
-print "=== Function 1: sayHi ===";
-fun sayHi(first, last) {
-  print "Hi, " + first + " " + last + "!";
+print "** Function 1:  sayJoke**";
+story sayJoke(joke, punchline) {
+  say (joke) + " " + (punchline);
 }
-sayHi("Dear", "Reader");
+sayJoke("Why doesn't C get respect from C++ and Java?", "It doesn't have class");
 
-print "=== Function 2: fib ===";
-fun fib(n) {
-  if (n <= 1) return n;
-  return fib(n - 2) + fib(n - 1);
+
+ "** Function 2: fib **";
+action fib(n) {
+  if (n <= 1) give n;
+  give fib(n - 2) + fib(n - 1);
 }
-for (var i = 0; i < 20; i = i + 1) {
-  print fib(i);
+for (store i = 0; i < 20; i = i + 1) {
+  say fib(i);
 }
 
-print "=== Function 3: closure ===";
-fun makeCounter() {
-  var i = 0;
-  fun count() {
+say "** Function 3: closure **";
+action keepCount() {
+  store i = 0;
+  action count() {
     i = i + 1;
-    print i;
+    show i;
   }
 
   return count;
 }
-var counter = makeCounter();
-for (var j = 0; j < 10; j = j + 1) {
+store counter = keepCount();
+for (store j = 0; j < 10; j = j + 1) {
   counter();
-} 
+}
+
+say "** Function 4: squaring **"
+action square(x) {
+    give x * x;
+}
+
+store a = 10;
+store b = 20;
+store result = square(a) + b * b - 100 / 5 % 8;
+say(result);
