@@ -1,4 +1,4 @@
-print "** Function 1:  sayJoke**";
+say "** Function 1:  sayJoke**";
 story sayJoke(joke, punchline) {
   say (joke) + " " + (punchline);
 }
