@@ -3,12 +3,12 @@
 This repository is a bytecode interpreter that was made for a custom programming language. This implementation is based on the C Lox interpreter from the book [Crafting Interpreters](https://craftinginterpreters.com/). 
 
 This language features:
-1. Complete control flow
-2. User-defined functions
-3. Dynamic typing
-4. Garbage collection
-5. Cross Platform Compatibility
-6. Exception Handling
+1. **Complete Control Flow**: Robust control structures for flexible programming.
+2. **User-Defined Functions**: Ability to create custom functions for code reusability.
+3. **Dynamic Typing**: Runtime type evaluation for greater coding flexibility.
+4. **Garbage Collection**: Automated memory management to prevent leaks.
+5. **Cross-Platform Compatibility**: Runs seamlessly on various operating systems.
+6. **Exception Handling**: Robust error detection and handling mechanism.
 
 This is how the language looks like:
 
