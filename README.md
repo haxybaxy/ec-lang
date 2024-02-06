@@ -1,7 +1,3 @@
-Sure, I can add emojis to the README to make it more engaging. Here's the revised version:
-
----
-
 # EC Language 🚀
 ## Make Programming EC 💻
 This repository is a bytecode interpreter that was made for a custom programming language. This implementation is based on the C Lox interpreter from the book [Crafting Interpreters](https://craftinginterpreters.com/). 
