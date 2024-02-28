@@ -4,7 +4,6 @@ action sayJoke(joke, punchline) {
 }
 sayJoke("Why doesn't C get respect from C++ and Java?", "It doesn't have class");
 
-
  "** Function 2: fib **";
 action fib(n) {
   if (n <= 1) give n;
@@ -28,13 +27,3 @@ store counter = keepCount();
 for (store j = 0; j < 10; j = j + 1) {
   counter();
 }
-
-say "** Function 4: squaring **";
-action square(x) {
-    give x * x;
-}
-
-store a = 10;
-store b = 20;
-store result = square(a) + b * b - 100;
-say(result);
